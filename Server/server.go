@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/google/uuid"
 )
 
@@ -47,7 +47,7 @@ type dolarBrl struct {
 }
 
 func (d dolarBrl) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/goexpert")
+	db, err := sql.Open("sqlite3", "./data/dolar_brl.db")
 	if err != nil {
 		panic(err)
 	}
@@ -118,7 +118,7 @@ func InsertDolarBrl(ctx context.Context,db *sql.DB, dolar string) error {
 		return ctx.Err()
 
 	default:
-		stmt, err := db.Prepare("INSERT INTO DolarBrl (id, price, create_at) VALUES (?, ?, ?)")
+		stmt, err := db.Prepare("INSERT INTO dolar_brl (id, price, create_at) VALUES (?, ?, ?)")
 		if err != nil {
 			return err
 		}
