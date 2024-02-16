@@ -1,0 +1,8 @@
+// up docker compose
+docker-compose up -d 
+// Execute mysql
+docker compose exec mysql bash
+// Access DB
+mysql -uroot -p goexpert
+//Create DB
+CREATE TABLE DolarBrl (id VARCHAR(255) PRIMARY KEY,price VARCHAR(25), create_at VARCHAR(150))engine=innodb default charset=utf8;
