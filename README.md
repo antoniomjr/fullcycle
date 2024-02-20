@@ -16,8 +16,5 @@ Script para listar dados
 Executar server - go run Server/server.go
  - http://localhost:8080/cotacao
 
-Executar server - go run Server/server.go
-- http://localhost:8080/cotacao
-
 Executar client - go run Client/client.go
 - http://localhost:8090/cotacao?code=BRL
