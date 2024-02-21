@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dolar Value</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            align-items: flex-start;
+        }
+        #content {
+            padding: 15px;
+            box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+            border-top: 5px solid #000;
+            border-left: 5px solid #000;
+            margin-top: 46px;
+        }
+        button {
+            border-radius: 10px;
+            background-color: #85bb65; /* Dollar bill green */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <header>
+            <h1>Welcome to get your Dolar Value now</h1>
+        </header>
+        <p>Dolar value: {{.Brl}}</p>
+        <p>{{ .Date }}</p>
+        <button onclick="location.reload();">Reload Page</button>
+        <footer>
+            <p id="year">© Dolar Value Site</p>
+        </footer>
+    </div>
+    <script>
+        var yearElement = document.getElementById('year');
+        yearElement.innerHTML = yearElement.innerHTML.replace('Dolar', new Date().getFullYear() + ' Dolar');
+    </script>
+</body>
+</html>
