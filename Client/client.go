@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"html/template"
 	"io"
 	"net/http"
 	"os"
@@ -22,11 +24,12 @@ type DataUSDBRL struct {
 		Ask        string `json:"ask"`
 		Timestamp  string `json:"timestamp"`
 		CreateDate string `json:"create_date"`
-	} `json:"DataUSDBRL"`
+	} `json:"USDBRL"`
 }
 
 type DolarBrl struct {
 	Brl string
+	Date string
 }
 
 func main() {
@@ -48,7 +51,11 @@ func BuscaDolarHandler(w http.ResponseWriter, r *http.Request) {
 
 	dolar, err := GetDolar()
 	if err != nil {
-		http.Error(w, "Timeout exceeded", http.StatusRequestTimeout)
+		if errors.Is(err, context.DeadlineExceeded) {
+			http.Error(w, "Timeout exceeded", http.StatusRequestTimeout)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -66,17 +73,31 @@ func BuscaDolarHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("Dolar: " + dolar))
+	tmpl, err := template.ParseFiles("html-template/index.html")
+	if err != nil {
+		http.Error(w, "Error reading template", http.StatusInternalServerError)
+		return
+	}
+
+	data := DolarBrl{
+		Brl: dolar,
+		Date: currentTime.Format("02-01-2006 15:04:05"),
+	}
+
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		http.Error(w, "Error executing template", http.StatusInternalServerError)
+		return
+	}
 }
 
 func GetDolar() (string, error) {
-
 	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Millisecond)
 	defer cancel()
 
-	request, err := http.NewRequestWithContext(ctx,"GET", "http://localhost:8080/cotacao", nil)
+	request, err := http.NewRequestWithContext(ctx, "GET", "http://localhost:8080/cotacao", nil)
 	if err != nil {
-		return "reponse error", err
+		return "response error", err
 	}
 	request.Header.Add("Accept", "application/json")
 
@@ -86,15 +107,20 @@ func GetDolar() (string, error) {
 	}
 	defer response.Body.Close()
 
+	// Check if the context has been cancelled
+	if ctx.Err() != nil {
+		return "", ctx.Err()
+	}
+
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return "erro body", err
+		return "error body", err
 	}
 
 	var data DataUSDBRL
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		return "erro desserialização", err
+		return "error deserialization", err
 	}
 
 	return data.USDBRL.Bid, nil
