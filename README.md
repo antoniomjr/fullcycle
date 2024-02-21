@@ -3,7 +3,7 @@
 
 ## Overview
 
-This repository contains a Go application developed as a part of the "`Desafios`" (Go Challenge) from the Pós Go Expert.
+This repository contains a Go application developed as a part of the "`Desafios/Client-Server-API`" (Go Challenge) from the Pós Go Expert.
 
 ## Challenge Requirements
 
